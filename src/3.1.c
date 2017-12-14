@@ -35,36 +35,36 @@ int main (int argc, char *argv[])//argc is # of arguments/argv is array of argum
 
 	if (pthread_create(&thread1, NULL, findAverage, num) != 0)//pthread returns 0 if it suceeds
 	{
-		printf("Error in thread1");
+		perror("Error in thread1");
 		return 0;
 	}
 
 	if (pthread_create(&thread2, NULL, findMax, num) != 0)
 	{
-		printf("Error in thread2");
+		perror("Error in thread2");
 		return 0;
 	}
 
 	if (pthread_create(&thread3, NULL, findMin, num) != 0)
 	{
-		printf("Error in thread3");
+		perror("Error in thread3");
 		return 0;
 	}
 
 	if (pthread_join(thread1, NULL) != 0)
 	{
-		printf("Error joining thread1");
+		perror("Error joining thread1");
 		return 0;
 	}
 
 	if (pthread_join(thread2, NULL) != 0)
 	{
-		printf("Error joining thread2");
+		perror("Error joining thread2");
 	}
 
 	if (pthread_join(thread3, NULL) != 0)
 	{
-		printf("Error joining thread3");
+		perror("Error joining thread3");
 	}
 	printf("Average: %.2f\n", average);
 	printf("Max: %.2d\n", max);
