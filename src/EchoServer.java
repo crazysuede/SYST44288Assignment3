@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
 
 public class EchoServerV2
 {
@@ -7,19 +8,24 @@ public class EchoServerV2
 	
 	public static void main (String[] args) 
 	{
+
 		ServerSocket sock = null;//create sock available for entire method
 		try
 		{
+			ArrayList<Connection> connThreads = new ArrayList<Connection>();
 			System.out.println("main started");
 
-			int id = 1;
+			int id = 0;
 			boolean running = true;
 			sock = new ServerSocket(7000);
-			while (running == true)
+			while (running == true)//as long as server is running
 			{
-
-				new Thread(new Connection(id, sock.accept())).start();//create a new thread with connection
-				id++;//
+				
+				connThreads.add(id, (new Connection(id,sock.accept())));//create a new thread with connection
+				connThreads.get(id).start();//start the thread allowing the loop to continue with Thread in background
+				
+				id++;//When new connections are made increment the id so they all have unique IDs
+				
 			}
 		}
 		catch (IOException ioe)
@@ -50,11 +56,10 @@ class Connection extends Thread
 	public Connection(int idIn, Socket socketIn)
 	{
 		client = socketIn;//get Socket from main thread and use it for future connections
-		id = idIn;
-		System.out.println("Connection Class Made...");
-		newConn();
+		id = idIn;//each thread has its own ID to keep track of them
 	}
-	public void newConn()//method that threads will call
+	@Override
+	public void run()//method that threads will call
 	{
 		try 
 		{
@@ -82,14 +87,9 @@ class Connection extends Thread
 		}
 		finally
 		{
-			System.out.println("Server has finished");
+			System.out.println("Connection " + id + " has finished");
 		}
 	}
 
-	@Override
-	public void run() {
-		// TODO Auto-generated method stub
-		
-	}
 
 }
