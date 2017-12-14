@@ -1,3 +1,4 @@
+//By Matthew Siuda (crazysuede)
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
@@ -10,6 +11,7 @@ int count = 0;
 
 void * findAverage(void * num);
 void * findMax(void * num);
+void * findMin(void * num);
 
 int main (int argc, char *argv[])//argc is # of arguments/argv is array of arguments
 {
@@ -43,6 +45,12 @@ int main (int argc, char *argv[])//argc is # of arguments/argv is array of argum
 		return 0;
 	}
 
+	if (pthread_create(&thread3, NULL, findMin, num) != 0)
+	{
+		printf("Error in thread3");
+		return 0;
+	}
+
 	if (pthread_join(thread1, NULL) != 0)
 	{
 		printf("Error joining thread1");
@@ -50,8 +58,17 @@ int main (int argc, char *argv[])//argc is # of arguments/argv is array of argum
 	}
 
 	if (pthread_join(thread2, NULL) != 0)
+	{
+		printf("Error joining thread2");
+	}
+
+	if (pthread_join(thread3, NULL) != 0)
+	{
+		printf("Error joining thread3");
+	}
 	printf("Average: %.2f\n", average);
 	printf("Max: %.2d\n", max);
+	printf("Min: %.2d\n", min);
 
 
 }
@@ -88,4 +105,24 @@ void * findMax(void * num)
 		}
 	}
 	puts("findMax Finished");
+}
+
+void * findMin(void * num)
+{
+	puts("findMin Launched.");
+
+	int x;//counter variable
+
+	int *temp = (int *)num;//create local variable
+
+	min = temp[x+1];//set the first number is current min
+
+	for (x = 0; x < count; x++)//go thru loop
+	{
+		if (temp[x+1] < min)//if any are less then min
+		{
+			min = temp[x+1];//set new min
+		}
+	}
+	puts("findMin Finished");
 }
