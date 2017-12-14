@@ -3,12 +3,13 @@
 #include <pthread.h>
 
 double average = 0;//variable for double
-int max;//variable for max
+int max = 0;//variable for max
 int min;//variable for min
 
 int count = 0;
 
 void * findAverage(void * num);
+void * findMax(void * num);
 
 int main (int argc, char *argv[])//argc is # of arguments/argv is array of arguments
 {
@@ -30,13 +31,13 @@ int main (int argc, char *argv[])//argc is # of arguments/argv is array of argum
 		printf("value at position %d is %d\n", x, num[x]);//debug to see numbers being read correctly
 	}
 
-	if (pthread_create(&thread1, NULL, findAverage, num) != 0)
+	if (pthread_create(&thread1, NULL, findAverage, num) != 0)//pthread returns 0 if it suceeds
 	{
 		printf("Error in thread1");
 		return 0;
 	}
 
-	if (pthread_create(&thead2, NULL, findMax, num) != 0)
+	if (pthread_create(&thread2, NULL, findMax, num) != 0)
 	{
 		printf("Error in thread2");
 		return 0;
@@ -48,7 +49,9 @@ int main (int argc, char *argv[])//argc is # of arguments/argv is array of argum
 		return 0;
 	}
 
+	if (pthread_join(thread2, NULL) != 0)
 	printf("Average: %.2f\n", average);
+	printf("Max: %.2d\n", max);
 
 
 }
@@ -67,4 +70,22 @@ void * findAverage(void * num)
 		//printf("findAverage Thread: sum is currently %d\n", sum);//DEBUG check sum
 	}
 	average = (double)sum / count;//change average in global
+}
+
+void * findMax(void * num)
+{
+	puts("findMax Launched.");
+
+	int x;//counter variable
+
+	int *temp = (int *)num;//create local number variable
+
+	for (x = 0; x < count; x++)//go thru all numbers
+	{
+		if (temp[x+1] > max)//if any of the numbers is greater than the current max
+		{
+			max = temp[x+1];//set new max
+		}
+	}
+	puts("findMax Finished");
 }
